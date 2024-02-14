@@ -57,8 +57,8 @@ void Init() {
     }
 
     // init Player
-    player.position.x = DEFAULT_PLAYER_POSITION_X;
-    player.position.y = DEFAULT_PLAYER_POSITION_Y;
+    player.rect.x = DEFAULT_PLAYER_POSITION_X;
+    player.rect.y = DEFAULT_PLAYER_POSITION_Y;
     player.png_hat = IMG_Load("images/hat.png");
     if (!player.png_hat) {
         SDL_Log("Failed to load png_hat: %s", SDL_GetError());
@@ -71,12 +71,12 @@ void Init() {
         DeInit(1);
     }
 
-    // init Cursor
-    cursor.position.x = DEFAULT_CURSOR_POSITION_X;
-    cursor.position.y = DEFAULT_CURSOR_POSITION_Y;
-
     keyboard_state = SDL_GetKeyboardState(NULL);
 
+}
+
+double getRotationAngle() {
+    return -90 + atan2(cursor.rect.y - (player.rect.y + (player.rect.h / 2)), cursor.rect.x - (player.rect.x + (player.rect.w / 2))) * (180 / M_PI);
 }
 
 int main(int argc, char *argv[]) {
@@ -97,8 +97,8 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    cursor.position.x = ev.motion.x;
-                    cursor.position.y = ev.motion.y;
+                    cursor.rect.x = ev.motion.x;
+                    cursor.rect.y = ev.motion.y;
                     break;
 
                 case SDL_QUIT:
@@ -108,24 +108,30 @@ int main(int argc, char *argv[]) {
         }
 
         if (keyboard_state[SDL_SCANCODE_UP] || keyboard_state[SDL_SCANCODE_W]) {
-            player.position.y -= DELTA_PLAYER_MOVE;
+            player.rect.y -= DELTA_PLAYER_MOVE;
         }
         if (keyboard_state[SDL_SCANCODE_DOWN] || keyboard_state[SDL_SCANCODE_S]) {
-            player.position.y += DELTA_PLAYER_MOVE;
+            player.rect.y += DELTA_PLAYER_MOVE;
         }
         if (keyboard_state[SDL_SCANCODE_LEFT] || keyboard_state[SDL_SCANCODE_A]) {
-            player.position.x -= DELTA_PLAYER_MOVE;
+            player.rect.x -= DELTA_PLAYER_MOVE;
         }
         if (keyboard_state[SDL_SCANCODE_RIGHT] || keyboard_state[SDL_SCANCODE_D]) {
-            player.position.x += DELTA_PLAYER_MOVE;
+            player.rect.x += DELTA_PLAYER_MOVE;
         }
 
 
-        player.position.w = DEFAULT_PLAYER_WIDTH;
-        player.position.h = DEFAULT_PLAYER_HEIGHT;
+        player.rect.w = DEFAULT_PLAYER_WIDTH;
+        player.rect.h = DEFAULT_PLAYER_HEIGHT;
 
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, player.texture_hat, NULL, &player.position);
+        SDL_RenderCopyEx(renderer,
+                         player.texture_hat,
+                         NULL,
+                         &player.rect,
+                         getRotationAngle(),
+                         NULL,
+                         SDL_FLIP_NONE);
         SDL_RenderPresent(renderer);
 
         SDL_Delay(60);

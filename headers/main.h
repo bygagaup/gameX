@@ -17,7 +17,7 @@ struct Windows {
 struct Player {
     SDL_Surface *png_hat;
     SDL_Texture *texture_hat;
-    SDL_Rect position;
+    SDL_Rect rect;
 };
 
 #define DEFAULT_PLAYER_WIDTH 35
@@ -27,11 +27,8 @@ struct Player {
 #define DEFAULT_PLAYER_POSITION_Y (DEFAULT_WINDOWS_HEIGHT / 2)
 
 struct Cursor {
-    struct SDL_Rect position;
+    struct SDL_Rect rect;
 };
-
-#define DEFAULT_CURSOR_POSITION_X (DEFAULT_WINDOWS_WIDTH / 2)
-#define DEFAULT_CURSOR_POSITION_Y (DEFAULT_WINDOWS_HEIGHT / 2)
 
 
 #endif //GAMEX_MAIN_H
